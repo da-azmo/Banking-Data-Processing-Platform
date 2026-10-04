@@ -3,13 +3,13 @@
 <p align="center">
 	<img src="../images/entities_schema_dds.png" alt="Рис. 1. Схема данных для DDS.">
 	<br>
-	(Рис. 1. Схема данных для DDS.)
+	Рис. 1. Схема данных для DDS.
 	<br>
 </p>
 
 <p align="center">
 	<img src="../images/entities_schema_dm.png" alt="Рис. 2. Схема данных для DM.">
 	<br>
-	(Рис. 2. Схема данных для DM.)
+	Рис. 2. Схема данных для DM.
 	<br>
 </p>
