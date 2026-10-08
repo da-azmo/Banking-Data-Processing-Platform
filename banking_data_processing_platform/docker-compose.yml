@@ -1,0 +1,106 @@
+services:
+
+  kafka:
+    image: apache/kafka:4.3.1
+    container_name: banking-data-processing-platform-KAFKA
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    mem_limit: 768m
+    mem_reservation: 512m
+    environment:
+      # Уникальный ID брокера в кластере (для KRaft)
+      KAFKA_NODE_ID: 1
+
+      # Узел выполняет обе роли: и брокера (хранение данных), и контроллера (управление кластером)
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      # На каких интерфейсах и портах Kafka слушает: 9092 для клиентов, 9093 для контроллера
+      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:29092,CONTROLLER://:9093
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+
+      # Адрес, который Kafka сообщает клиентам. Важно: "kafka" — это имя сервиса внутри docker-сети
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092
+
+      # Указывает, какой listener использовать для связи с контроллером
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      # Список узлов-контроллеров (кворум). Здесь один узел с ID=1 на kafka:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+
+      # Фактор репликации для служебного топика __consumer_offsets (1 = без реплик, ок для dev)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+      # Фактор репликации для топика транзакций (1 = без реплик, ок для dev)
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+      # Минимальное число синхронных реплик для транзакционного топика (1 = без реплик)
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+      # Задержка перед первой ребалансировкой consumer-группы (0 = сразу, ускоряет старт)
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+  debezium:
+    image: quay.io/debezium/connect:3.3
+    container_name: banking-data-processing-platform-DEBEZIUM
+    mem_limit: 1g
+    mem_reservation: 512m
+
+    # Запускать этот контейнер после kafka (не гарантирует готовность Kafka, только порядок)
+    depends_on:
+      - kafka
+    
+    # Порт REST API Kafka Connect (сюда отправляем конфигурации коннекторов)
+    ports:
+      - "8083:8083"
+    
+    environment:
+      
+      # Адрес Kafka для подключения Connect (внутри docker-сети)
+      BOOTSTRAP_SERVERS: kafka:9092
+      
+      # ID группы для Kafka Connect (должен быть уникальным для кластера Connect)
+      GROUP_ID: 1
+      
+      # Топик Kafka, где хранятся конфигурации коннекторов
+      CONFIG_STORAGE_TOPIC: connect_configs
+      
+      # Топик Kafka, где хранятся смещения (offsets) коннекторов
+      OFFSET_STORAGE_TOPIC: connect_offsets
+
+      # Топик Kafka, где хранятся статусы коннекторов
+      STATUS_STORAGE_TOPIC: connect_statuses
+
+      # Фактор репликации для топика конфигураций (1 = без реплик)
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+
+      # Фактор репликации для топика смещений (1 = без реплик)
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+
+      # Фактор репликации для топика статусов (1 = без реплик) 
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+    
+      # Это уже не Docker, а настройка Java Virtual Machine
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
+
+    # Позволяет из контейнера обращаться к хосту по имени host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  minio:
+    image: minio/minio
+    container_name: banking-data-processing-platform-MINIO
+    mem_limit: 512m
+
+    # Запуск сервера MinIO: данные в /data, веб-консоль на порту 9090
+    command: server /data --console-address ":9090"
+    ports:
+
+      # S3 API — сюда подключаются клиенты (Debezium S3 Sink, aws cli и т.д.)
+      - "9000:9000"
+
+      # Web UI (консоль) — сюда заходим браузером
+      - "9090:9090"

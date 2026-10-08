@@ -1,0 +1,29 @@
+{
+    "name": "banking-data-processing-platform-source",
+    "config" : {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+
+        "database.hostname": "${POSTGRES_HOST}",
+        "database.port": "${POSTGRES_PORT}",
+        "database.user": "${POSTGRES_USER}",
+        "database.password": "${POSTGRES_PASSWORD}",
+        "database.dbname": "${POSTGRES_DATABASE}",
+
+        "topic.prefix": "banking-data-processing-platform-source",
+
+        "plugin.name": "pgoutput",
+
+        "slot.name": "banking_data_processing_platform_source_debezium",
+
+        "publication.name": "banking_data_processing_platform_source_publication",
+        "publication.autocreate.mode": "disabled",
+
+        "schema.include.list": "sources",
+
+        "table.include.list": "sources.clients,sources.client_documents,sources.bank_accounts,sources.cards",
+
+        "snapshot.mode": "initial",
+
+        "include.schema.changes": "false"
+    }
+}
