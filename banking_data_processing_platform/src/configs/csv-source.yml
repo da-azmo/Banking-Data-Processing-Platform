@@ -1,0 +1,6 @@
+csv:
+  s3_path: s3a://banking-data-processing-platform/raw/csv/sources/{table_name}/{year}/{month}/{day}/{hour}
+
+  tables:
+    - name: transactions
+      file_path: file:///mnt/d/banking_data_processing_platform/Banking_Data_Processing_Platform_schemas/sources/transactions.csv

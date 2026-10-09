@@ -1,10 +1,18 @@
 from pyspark.sql import SparkSession
 import os
 from dotenv import load_dotenv
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent / 'storage'))
+
+from minio import get_s3_connection_options
 
 load_dotenv()
 
 def get_spark_session():
+
+    s3_connection_options = get_s3_connection_options()
     
     spark = ( SparkSession.builder
         .appName("SparkApp")
@@ -16,9 +24,9 @@ def get_spark_session():
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config("spark.hadoop.fs.s3a.path.style.access", "true")
         .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
-        .config("spark.hadoop.fs.s3a.access.key", os.getenv("MINIO_S3_ACCESS_KEY"))
-        .config("spark.hadoop.fs.s3a.secret.key", os.getenv("MINIO_S3_SECRET_KEY"))
-        .config("spark.hadoop.fs.s3a.endpoint", os.getenv("MINIO_S3_ENDPOINT"))
+        .config("spark.hadoop.fs.s3a.access.key", s3_connection_options.get('access_key'))
+        .config("spark.hadoop.fs.s3a.secret.key", s3_connection_options.get('secret_key'))
+        .config("spark.hadoop.fs.s3a.endpoint", s3_connection_options.get('endpoint'))
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:4.2.0,org.apache.hadoop:hadoop-aws:3.5.0")
     ).getOrCreate()
 
