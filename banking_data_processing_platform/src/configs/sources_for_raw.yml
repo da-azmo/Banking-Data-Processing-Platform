@@ -1,0 +1,28 @@
+api:
+  s3_path: s3a://banking-data-processing-platform/raw/api/sources/{table_name}/{year}/{month}/{day}/{hour}
+
+  tables:
+    - name: exchange_rates
+      url: https://api.frankfurter.dev/v2/rates
+      params:
+        base: RUB
+        quotes: USD,EUR,CHF,GBP
+
+csv:
+  s3_path: s3a://banking-data-processing-platform/raw/csv/sources/{table_name}/{year}/{month}/{day}/{hour}
+
+  tables:
+    - name: transactions
+      file_path: file:///mnt/d/banking_data_processing_platform/Banking_Data_Processing_Platform_schemas/sources/transactions.csv
+
+json:
+  s3_path: s3a://banking-data-processing-platform/raw/json/sources/{table_name}/{year}/{month}/{day}/{hour}
+
+  tables:
+    - name: payments
+      file_path: file:///mnt/d/banking_data_processing_platform/Banking_Data_Processing_Platform_schemas/sources/payments.json
+
+
+postgre:
+  s3_path: s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/{year}/{month}/{day}/{hour}
+  s3_checkpoint: s3a://banking-data-processing-platform/raw/postgre/checkpoints/{table_name}
