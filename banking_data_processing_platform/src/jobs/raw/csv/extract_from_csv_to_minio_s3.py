@@ -17,6 +17,7 @@ def get_extract_from_csv_to_minio_s3(spark: SparkSession, csv_config: dict):
             spark.read
             .format("csv")
             .option("header", "true")
+            .option("delimiter", ";")
             .load(table.get("file_path"))
         )
 

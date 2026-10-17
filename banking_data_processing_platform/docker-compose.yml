@@ -86,6 +86,15 @@ services:
       # Это уже не Docker, а настройка Java Virtual Machine
       KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
 
+      POSTGRE_HOST: ${POSTGRE_HOST}
+      POSTGRE_PORT: ${POSTGRE_PORT}
+      POSTGRE_SOURCE_USER: ${POSTGRE_SOURCE_USER}
+      POSTGRE_SOURCE_PASSWORD: ${POSTGRE_SOURCE_PASSWORD}
+      POSTGRE_SOURCE_DATABASE: ${POSTGRE_SOURCE_DATABASE}
+
+      CONNECT_CONFIG_PROVIDERS: env
+      CONNECT_CONFIG_PROVIDERS_ENV_CLASS: org.apache.kafka.common.config.provider.EnvVarConfigProvider
+
     # Позволяет из контейнера обращаться к хосту по имени host.docker.internal
     extra_hosts:
       - "host.docker.internal:host-gateway"

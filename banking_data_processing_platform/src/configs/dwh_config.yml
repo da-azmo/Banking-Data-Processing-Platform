@@ -1,0 +1,135 @@
+ods:
+  tables:
+
+    - name: bank_accounts
+      s3_path: s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/{year}/{month}/{day}/{hour}
+      dtype:
+        id: StringType
+        status: StringType
+        document_id: StringType
+        is_deleted: BooleanType
+        created_at: TimestampType
+        updated_at: TimestampType
+        dwh_loaded_at: TimestampType
+      not_null:
+        - id
+        - document_id
+        - status
+
+    - name: cards
+      s3_path: s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/{year}/{month}/{day}/{hour}
+      dtype:
+        id: StringType
+        status: StringType
+        account_id: StringType
+        number: StringType
+        term: DateType
+        created_at: TimestampType
+        updated_at: TimestampType
+        dwh_loaded_at: TimestampType
+      not_null:
+        - id
+        - account_id
+        - number
+        - status
+        - term
+
+    - name: client_documents
+      s3_path: s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/{year}/{month}/{day}/{hour}
+      dtype:
+        id: StringType
+        client_id: StringType
+        status: StringType
+        country: StringType
+        document_type: StringType
+        series: StringType
+        number: StringType
+        issue_date: DateType
+        issuer: StringType
+        created_at: TimestampType
+        updated_at: TimestampType
+        dwh_loaded_at: TimestampType
+      not_null:
+        - id
+        - client_id
+        - status
+        - country
+        - series
+        - issue_date
+        - issuer
+
+    - name: clients
+      s3_path: s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/{year}/{month}/{day}/{hour}
+      dtype:
+        id: StringType
+        first_name: StringType
+        last_name: StringType
+        middle_name: StringType
+        birth_date: DateType
+        is_deleted: BooleanType
+        created_at: TimestampType
+        updated_at: TimestampType
+        dwh_loaded_at: TimestampType
+      not_null:
+        - id
+        - first_name
+        - last_name
+        - birth_date
+
+    - name: exchange_rates
+      s3_path: s3a://banking-data-processing-platform/raw/api/sources/{table_name}/{year}/{month}/{day}/{hour}
+      dtype:
+        id: StringType
+        name: StringType
+        rate: DecimalType(10, 2)
+        base: StringType
+        created_at: TimestampType
+        updated_at: TimestampType
+        dwh_loaded_at: TimestampType
+      not_null:
+        - id
+        - name
+        - rate
+        - base
+
+    - name: payments
+      s3_path: s3a://banking-data-processing-platform/raw/json/sources/{table_name}/{year}/{month}/{day}/{hour}
+      dtype:
+        id: StringType
+        category_id: StringType
+        transaction_id: StringType
+        card_id_sender: StringType
+        card_id_recipient: StringType
+        payment_date: DateType
+        status: StringType
+        payment_method: StringType
+        created_at: TimestampType
+        updated_at: TimestampType
+        dwh_loaded_at: TimestampType
+      not_null:
+        - id
+        - category_id
+        - transaction_id
+        - card_id_sender
+        - card_id_recipient
+        - payment_date
+        - status
+        - payment_method
+
+    - name: transactions
+      s3_path: s3a://banking-data-processing-platform/raw/csv/sources/{table_name}/{year}/{month}/{day}/{hour}
+      dtype:
+        id: StringType
+        card_id_sender: StringType
+        transaction_date: TimestampType
+        amount: DecimalType(20, 2)
+        currency: StringType
+        type: StringType
+        created_at: TimestampType
+        dwh_loaded_at: TimestampType
+      not_null:
+        - id
+        - card_id_sender
+        - amount
+        - currency
+        - type

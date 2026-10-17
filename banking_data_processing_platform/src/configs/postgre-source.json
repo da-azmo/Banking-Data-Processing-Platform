@@ -3,11 +3,11 @@
     "config" : {
         "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
 
-        "database.hostname": "${POSTGRE_HOST}",
-        "database.port": "${POSTGRE_PORT}",
-        "database.user": "${POSTGRE_USER}",
-        "database.password": "${POSTGRE_PASSWORD}",
-        "database.dbname": "${POSTGRE_DATABASE}",
+        "database.hostname": "${env:POSTGRE_HOST}",
+        "database.port": "${env:POSTGRE_PORT}",
+        "database.user": "${env:POSTGRE_SOURCE_USER}",
+        "database.password": "${env:POSTGRE_SOURCE_PASSWORD}",
+        "database.dbname": "${env:POSTGRE_SOURCE_DATABASE}",
 
         "topic.prefix": "banking-data-processing-platform-source",
 

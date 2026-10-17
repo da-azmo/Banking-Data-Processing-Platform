@@ -21,6 +21,8 @@ def get_spark_session():
         .config("spark.executor.memory", "1g")
         .config("spark.sql.shuffle.partitions", "2")
         .config("spark.driver.maxResultSize", "1g")
+        .config("spark.ui.port", "4040")
+        .config("spark.ui.bindAddress", "0.0.0.0")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config("spark.hadoop.fs.s3a.path.style.access", "true")
         .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
