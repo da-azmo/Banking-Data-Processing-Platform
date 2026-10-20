@@ -23,4 +23,9 @@ def get_extract_from_csv_to_minio_s3(spark: SparkSession, csv_config: dict):
 
         dataframes[table.get("name")] = df
 
+    # for name, df in dataframes.items():
+    #     print(name)
+    #     df.show()
+    #     print()
+
     return dataframes

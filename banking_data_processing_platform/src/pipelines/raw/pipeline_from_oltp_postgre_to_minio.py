@@ -28,7 +28,7 @@ def pipeline_oltp():
     print(f"sparkUI: {spark.sparkContext.uiWebUrl}")
     input("Нажмите Enter для продолжения")
 
-    spark.awaitAnyTermination()
+    spark.streams.awaitAnyTermination()
 
     spark.stop()
 

@@ -18,7 +18,7 @@ def pipeline_csv():
 
     df = get_extract_from_csv_to_minio_s3(spark, CONFIG_CSV)
 
-    get_load_from_csv_to_minio_s3(df, CONFIG_CSV)
+    get_load_from_csv_to_minio_s3(df, CONFIG_CSV, spark)
 
     spark.stop()
 

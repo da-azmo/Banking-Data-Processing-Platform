@@ -1,4 +1,4 @@
-from pyspark.sql.types import StringType, DateType, BooleanType, TimestampType, DateType, DecimalType
+from pyspark.sql.types import StringType, DateType, BooleanType, TimestampType, DateType, DecimalType, LongType, IntegerType
 
 TYPE_MAPPING = {
     "stringtype": StringType(),
@@ -8,6 +8,9 @@ TYPE_MAPPING = {
     "datetype": DateType(),
     "decimaltype(10, 2)": DecimalType(10, 2),
     "decimaltype(20, 2)": DecimalType(20, 2),
+    "string": StringType(),
+    "int64": LongType(),
+    "int32": IntegerType(),
 }
 
 def parse_type(type_column: str):
