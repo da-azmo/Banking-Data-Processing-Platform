@@ -117,10 +117,10 @@ def transform_types(dtype: dict, df: DataFrame, source: str):
 def validate_not_null(not_null_set: set, df_transformed: DataFrame, table_name: str):
     invalid_condition = None
 
-    schema_field = {
-        field.name:field.dataType
-        for field in df_transformed.schema.fields
-    }
+    # schema_field = {
+    #     field.name:field.dataType
+    #     for field in df_transformed.schema.fields
+    # }
 
     for column_name in not_null_set:
 

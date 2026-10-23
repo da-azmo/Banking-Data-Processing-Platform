@@ -1,0 +1,269 @@
+version: 2
+
+sources:
+  - name: staging
+    schema: staging
+    tables:
+      - name: bank_accounts
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: status
+            description: ""
+          - name: document_id
+            description: ""
+          - name: is_deleted
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+          
+      - name: cards
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: status
+            description: ""
+          - name: account_id
+            description: ""
+          - name: number
+            description: ""
+          - name: term
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+
+      - name: client_documents
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: client_id
+            description: ""
+          - name: status
+            description: ""
+          - name: country
+            description: ""
+          - name: document_type
+            description: ""
+          - name: series
+            description: ""
+          - name: number
+            description: ""
+          - name: issue_date
+            description: ""
+          - name: issuer
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+
+      - name: clients
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: first_name
+            description: ""
+          - name: last_name
+            description: ""
+          - name: middle_name
+            description: ""
+          - name: birth_date
+            description: ""
+          - name: is_deleted
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+    
+      - name: exchange_rates
+        description: ""
+        columns:
+          - name: name
+            description: ""
+          - name: rate
+            description: ""
+          - name: base
+            description: ""
+          - name: created_at
+            description: ""
+      
+      - name: payments
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: category_id
+            description: ""
+          - name: transaction_id
+            description: ""
+          - name: card_id_sender
+            description: ""
+          - name: card_id_recipient
+            description: ""
+          - name: payment_date
+            description: ""
+          - name: status
+            description: ""
+          - name: payment_method
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+    
+      - name: transactions
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: card_id_sender
+            description: ""
+          - name: transaction_date
+            description: ""
+          - name: amount
+            description: ""
+          - name: currency
+            description: ""
+          - name: type
+            description: ""
+
+      - name: invalid_bank_accounts
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: status
+            description: ""
+          - name: document_id
+            description: ""
+          - name: is_deleted
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+          
+      - name: invalid_cards
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: status
+            description: ""
+          - name: account_id
+            description: ""
+          - name: number
+            description: ""
+          - name: term
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+
+      - name: invalid_client_documents
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: client_id
+            description: ""
+          - name: status
+            description: ""
+          - name: country
+            description: ""
+          - name: document_type
+            description: ""
+          - name: series
+            description: ""
+          - name: number
+            description: ""
+          - name: issue_date
+            description: ""
+          - name: issuer
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+
+      - name: invalid_clients
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: first_name
+            description: ""
+          - name: last_name
+            description: ""
+          - name: middle_name
+            description: ""
+          - name: birth_date
+            description: ""
+          - name: is_deleted
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+    
+      - name: invalid_exchange_rates
+        description: ""
+        columns:
+          - name: name
+            description: ""
+          - name: rate
+            description: ""
+          - name: base
+            description: ""
+          - name: created_at
+            description: ""
+      
+      - name: invalid_payments
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: category_id
+            description: ""
+          - name: transaction_id
+            description: ""
+          - name: card_id_sender
+            description: ""
+          - name: card_id_recipient
+            description: ""
+          - name: payment_date
+            description: ""
+          - name: status
+            description: ""
+          - name: payment_method
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+    
+      - name: invalid_transactions
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: card_id_sender
+            description: ""
+          - name: transaction_date
+            description: ""
+          - name: amount
+            description: ""
+          - name: currency
+            description: ""
+          - name: type
+            description: ""

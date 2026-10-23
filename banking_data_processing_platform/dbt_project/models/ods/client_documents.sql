@@ -1,0 +1,64 @@
+{{ config(
+    materialized='incremental'
+    , incremental_strategy='merge'
+    , schema='ods'
+    , unique_key='id'
+    , on_schema_change='fail') }}
+
+with staging_data as (
+    select
+        id::text
+        , client_id::text
+        , status::text
+        , country::text
+        , document_type::text
+        , series::text
+        , number::text
+        , issue_date::date
+        , issuer::text
+        , created_at::timestamptz
+        , updated_at::timestamptz
+        , {{ current_timestamp() }} as dwh_loaded_at
+    from {{ source("staging", "client_documents") }}
+    where id is not null and
+        client_id is not null and
+        status is not null and
+        country is not null and
+        series is not null and
+        number is not null and
+        issue_date is not null and
+        issuer is not null and
+        (length(series)=4) and
+        (length(number)=6)
+),
+existed_data as (
+    select
+        staging_data.id
+        , staging_data.client_id
+        , staging_data.status
+        , staging_data.country
+        , staging_data.document_type
+        , staging_data.series
+        , staging_data.number
+        , staging_data.issue_date
+        , staging_data.issuer
+        , staging_data.created_at
+        , staging_data.updated_at
+        , case when this.id is null then staging_data.dwh_loaded_at else this.dwh_loaded_at end as dwh_loaded_at
+    from staging_data
+    left join {{ this }} this on staging_data.id = this.id
+)
+select 
+    id
+    , client_id
+    , status
+    , country
+    , document_type
+    , series
+    , number
+    , issue_date
+    , issuer
+    , created_at
+    , updated_at
+    , dwh_loaded_at
+from existed_data

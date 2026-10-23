@@ -22,11 +22,7 @@ def check_debezium_connector(debezium_connector_config: dict):
             f"{CONNECT_URL}/connectors",
             json=debezium_connector_config,
             timeout=30)
-        if response.status_code >= 400:
-            print("STATUS:", response.status_code)
-            print("RESPONSE:", response.text)
-
-        #response.raise_for_status()
+        response.raise_for_status()
 
         print(f"Connector {CONNECT_NAME} has been created")
 

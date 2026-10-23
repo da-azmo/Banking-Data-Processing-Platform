@@ -21,13 +21,13 @@ def get_extract_from_minio_raw_to_postgre_staging(spark: SparkSession, config: d
         table_name = table.get("name")
         #s3_path = get_s3_path(table).format(table_name=table_name)
         if table_name == "exchange_rates":
-            s3_path = f"s3a://banking-data-processing-platform/raw/api/sources/{table_name}/2026/10/19/21"
+            s3_path = f"s3a://banking-data-processing-platform/raw/api/sources/{table_name}/2026/10/23/19"
         elif table_name == "payments":
-            s3_path = f"s3a://banking-data-processing-platform/raw/json/sources/{table_name}/2026/10/19/23"
+            s3_path = f"s3a://banking-data-processing-platform/raw/json/sources/{table_name}/2026/10/23/19"
         elif table_name == "transactions":
-            s3_path = f"s3a://banking-data-processing-platform/raw/csv/sources/{table_name}/2026/10/20/21"
+            s3_path = f"s3a://banking-data-processing-platform/raw/csv/sources/{table_name}/2026/10/23/19"
         else:
-            s3_path = f"s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/2026/10/19/11"
+            s3_path = f"s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/2026/10/23/19"
 
             df = spark.read.parquet(s3_path).withColumn("value_json", col("value").cast("string"))
 
