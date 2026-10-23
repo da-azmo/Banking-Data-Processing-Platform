@@ -22,19 +22,47 @@ with staging_data as (
         last_name is not null and
         birth_date is not null
 ),
+staging_data_with_row_number as (
+    select
+        id
+        , first_name
+        , last_name
+        , middle_name
+        , birth_date
+        , is_deleted
+        , created_at
+        , updated_at
+        , dwh_loaded_at
+        , row_number() over (partition by id order by dwh_loaded_at desc) as rn
+    from staging_data
+),
+staging_data_without_duplicates as (
+    select
+        id
+        , first_name
+        , last_name
+        , middle_name
+        , birth_date
+        , is_deleted
+        , created_at
+        , updated_at
+        , dwh_loaded_at
+    from staging_data_with_row_number
+    where rn = 1
+),
 existed_data as (
     select
-        staging_data.id
-        , staging_data.first_name
-        , staging_data.last_name
-        , staging_data.middle_name
-        , staging_data.birth_date
-        , staging_data.is_deleted
-        , staging_data.created_at
-        , staging_data.updated_at
-        , case when this.id is null then staging_data.dwh_loaded_at else this.dwh_loaded_at end as dwh_loaded_at
-    from staging_data
-    left join {{ this }} this on staging_data.id = this.id
+        staging_data_without_duplicates.id
+        , staging_data_without_duplicates.first_name
+        , staging_data_without_duplicates.last_name
+        , staging_data_without_duplicates.middle_name
+        , staging_data_without_duplicates.birth_date
+        , staging_data_without_duplicates.is_deleted
+        , staging_data_without_duplicates.created_at
+        , staging_data_without_duplicates.updated_at
+        , case when this.id is null then staging_data_without_duplicates.dwh_loaded_at else this.dwh_loaded_at end as dwh_loaded_at
+    from staging_data_without_duplicates
+    left join {{ this }} this on staging_data_without_duplicates.id = this.id
 )
 select 
     id
