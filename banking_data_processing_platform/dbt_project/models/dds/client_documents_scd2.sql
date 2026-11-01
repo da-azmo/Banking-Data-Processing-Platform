@@ -22,28 +22,28 @@ with ods_data as (
         , {{ current_timestamp() }} as valid_from
         , '2999-01-01 00:00:00'::timestamptz as valid_to
         , true as is_current
-        , MD5(coalesce(id::text, '')  || '|' || 
-            coalesce(client_id::text, '') || '|' || 
-            coalesce(status::text, '') || '|' || 
-            coalesce(country::text, '') || '|' || 
-            coalesce(document_type::text, '') || '|' || 
-            coalesce(series::text, '') || '|' || 
-            coalesce(number::text, '') || '|' || 
-            coalesce(issue_date::text, '') || '|' || 
-            coalesce(issuer::text, '')) as hashdiff
+        , MD5(concat_ws('|',
+            coalesce(id::text, ''),
+            coalesce(client_id::text, ''),
+            coalesce(status::text, ''),
+            coalesce(country::text, ''),
+            coalesce(document_type::text, ''),
+            coalesce(series::text, ''),
+            coalesce(number::text, ''),
+            coalesce(issue_date::text, ''),
+            coalesce(issuer::text, ''))) as hashdiff
     from {{ ref("client_documents") }}
 
     {% if is_incremental() %}
-    where updated_at >= (
-        select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+    where dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 ),
 data_with_fk as (
     select
         ods_data.document_bk
-        , ods_data.client_sk as client_sk
+        , clients_scd2.client_sk as client_sk
         , ods_data.status
         , ods_data.country
         , ods_data.document_type
@@ -113,7 +113,7 @@ update_data as (
         , false as is_current
         , this.hashdiff
     from data_with_fk
-    join {{ this }} this on data_with_fk.client_bk = this.client_bk and data_with_fk.hashdiff != this.hashdiff and this.is_current
+    join {{ this }} this on data_with_fk.document_bk = this.document_bk and data_with_fk.hashdiff != this.hashdiff and this.is_current
 )
 {% endif %}
 select 

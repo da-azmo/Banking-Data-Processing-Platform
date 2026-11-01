@@ -17,15 +17,14 @@ with ods_data as (
     from {{ ref("cards") }} cards
     where not exists (
         select 1
-        from {{ ref('back_accounts_scd2') }} back_accounts_scd2
-        where back_accounts_scd2.account_bk = cards.account_id and back_accounts_scd2.is_current
+        from {{ ref('bank_accounts_scd2') }} bank_accounts_scd2
+        where bank_accounts_scd2.account_bk = cards.account_id and bank_accounts_scd2.is_current
     )
 
     {% if is_incremental() %}
-    and updated_at >= (
-        select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+    and dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 )
 
@@ -54,8 +53,7 @@ select
 from {{ ref('invalid_cards') }}
 
 {% if is_incremental() %}
-where updated_at >= (
-    select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-    from {{ this }} this
-)
+where dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
 {% endif %}

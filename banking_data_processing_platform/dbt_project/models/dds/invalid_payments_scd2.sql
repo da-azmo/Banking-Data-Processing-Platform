@@ -31,21 +31,20 @@ with ods_data as (
         )
         or not exists (
             select 1
-            from {{ ref('card_scd2') }} sender_card_scd2
+            from {{ ref('cards_scd2') }} sender_card_scd2
             where sender_card_scd2.card_bk = payments.card_id_sender and sender_card_scd2.is_current
         )
         or not exists (
             select 1
-            from {{ ref('card_scd2') }} recipient_card_scd2
+            from {{ ref('cards_scd2') }} recipient_card_scd2
             where recipient_card_scd2.card_bk = payments.card_id_recipient and recipient_card_scd2.is_current
         )
     )
 
     {% if is_incremental() %}
-    and updated_at >= (
-        select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+    and dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 )
 
@@ -80,8 +79,7 @@ select
 from {{ ref('invalid_payments') }}
 
 {% if is_incremental() %}
-where updated_at >= (
-    select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-    from {{ this }} this
-)
+where dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
 {% endif %}

@@ -4,8 +4,8 @@ services:
     image: apache/kafka:4.3.1
     container_name: banking-data-processing-platform-KAFKA
     ports:
-      - "9092:9092"
-      - "29092:29092"
+      - "127.0.0.1:9092:9092"
+      - "127.0.0.1:29092:29092"
     mem_limit: 768m
     mem_reservation: 512m
     environment:
@@ -55,7 +55,7 @@ services:
     
     # Порт REST API Kafka Connect (сюда отправляем конфигурации коннекторов)
     ports:
-      - "8083:8083"
+      - "127.0.0.1:8083:8083"
     
     environment:
       
@@ -109,7 +109,23 @@ services:
     ports:
 
       # S3 API — сюда подключаются клиенты (Debezium S3 Sink, aws cli и т.д.)
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
 
       # Web UI (консоль) — сюда заходим браузером
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
+
+  clickhouse:
+    image: "clickhouse/clickhouse-server:26.10"
+    container_name: banking-data-processing-platform-CLICKHOUSE
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ports:
+      - "127.0.0.1:8123:8123"
+      - "127.0.0.1:9001:9000"
+
+volumes:
+  clickhouse_data:

@@ -22,9 +22,8 @@ with ods_data as (
 
     {% if is_incremental() %}
     and dwh_loaded_at >= (
-        select coalesce(max(this.dwh_loaded_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 )
 
@@ -48,11 +47,10 @@ select
     , currency
     , "type"
     , dwh_loaded_at
-from {{ ref('invalid_transactions_scd2') }}
+from {{ ref('invalid_transactions') }}
 
 {% if is_incremental() %}
 where dwh_loaded_at >= (
-    select coalesce(max(this.dwh_loaded_at), '1900-01-01 00:00:00'::timestamptz)
-    from {{ this }} this
-)
+    select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+    from {{ this }} this)
 {% endif %}

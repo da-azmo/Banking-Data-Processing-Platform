@@ -21,21 +21,21 @@ with ods_data as (
         , {{ current_timestamp() }} as valid_from
         , '2999-01-01 00:00:00'::timestamptz as valid_to
         , true as is_current
-        , MD5(coalesce(id::text, '')  || '|' || 
-            coalesce(category_id::text, '') || '|' || 
-            coalesce(transaction_id::text, '') || '|' || 
-            coalesce(card_id_sender::text, '') || '|' || 
-            coalesce(card_id_recipient::text, '') || '|' || 
-            coalesce(payment_date::text, '') || '|' || 
-            coalesce(status::text, '') || '|' || 
-            coalesce(payment_method::text, '')) as hashdiff
+        , MD5(concat_ws('|',
+            coalesce(id::text, ''),
+            coalesce(category_id::text, ''),
+            coalesce(transaction_id::text, ''),
+            coalesce(card_id_sender::text, ''),
+            coalesce(card_id_recipient::text, ''),
+            coalesce(payment_date::text, ''),
+            coalesce(status::text, ''),
+            coalesce(payment_method::text, ''))) as hashdiff
     from {{ ref("payments") }}
 
     {% if is_incremental() %}
-    where updated_at >= (
-        select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+    where dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 ),
 data_with_fk as (
@@ -43,8 +43,8 @@ data_with_fk as (
         ods_data.payment_bk
         , purchase_categories_scd2.category_sk as category_sk
         , transactions_scd2.transaction_sk as transaction_sk
-        , cards_scd2.card_sk as card_sk_sender
-        , cards_scd2.card_sk as card_recipient_bk
+        , sender_cards_scd2.card_sk as card_sk_sender
+        , recipient_cards_scd2.card_sk as card_sk_recipient
         , ods_data.payment_date
         , ods_data.status
         , ods_data.payment_method
@@ -59,9 +59,9 @@ data_with_fk as (
     join {{ ref('purchase_categories_scd2') }} purchase_categories_scd2 on
         purchase_categories_scd2.category_bk = ods_data.category_bk and purchase_categories_scd2.is_current
     join {{ ref('transactions_scd2') }} transactions_scd2 on
-        transactions_scd2.transaction_bk = ods_data.transaction_bk and transactions_scd2.is_current
+        transactions_scd2.transaction_bk = ods_data.transaction_bk
     join {{ ref('cards_scd2') }} sender_cards_scd2 on
-        sender_cards_scd2.card_bk = ods_data.card_sk_sender and sender_cards_scd2.is_current
+        sender_cards_scd2.card_bk = ods_data.card_sender_bk and sender_cards_scd2.is_current
     join {{ ref('cards_scd2') }} recipient_cards_scd2 on
         recipient_cards_scd2.card_bk = ods_data.card_recipient_bk and recipient_cards_scd2.is_current
 ),

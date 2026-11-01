@@ -26,10 +26,9 @@ with ods_data as (
     )
 
     {% if is_incremental() %}
-    and updated_at >= (
-        select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+    and dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 )
 
@@ -66,8 +65,7 @@ select
 from {{ ref('invalid_client_documents') }}
 
 {% if is_incremental() %}
-where updated_at >= (
-    select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-    from {{ this }} this
-)
+where dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
 {% endif %}

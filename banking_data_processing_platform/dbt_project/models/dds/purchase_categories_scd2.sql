@@ -15,15 +15,15 @@ with ods_data as (
         , {{ current_timestamp() }} as valid_from
         , '2999-01-01 00:00:00'::timestamptz as valid_to
         , true as is_current
-        , MD5(coalesce(id::text, '')  || '|' || 
-            coalesce(name::text, '')) as hashdiff
-    from {{ ref("purchase_categories") }}
+        , MD5(concat_ws('|',
+            coalesce(id::text, ''),
+            coalesce(name::text, ''))) as hashdiff
+    from {{ source("ods", "purchase_categories") }}
 
     {% if is_incremental() %}
-    where updated_at >= (
-        select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+    where dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 ),
 insert_data as (

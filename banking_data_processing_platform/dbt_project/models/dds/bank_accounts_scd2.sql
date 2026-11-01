@@ -17,17 +17,17 @@ with ods_data as (
         , {{ current_timestamp() }} as valid_from
         , '2999-01-01 00:00:00'::timestamptz as valid_to
         , true as is_current
-        , MD5(coalesce(id::text, '')  || '|' || 
-            coalesce(status::text, '') || '|' || 
-            coalesce(document_id::text, '') || '|' ||
-            coalesce(is_deleted::text, '')) as hashdiff
+        , MD5(concat_ws('|',
+            coalesce(id::text, ''),
+            coalesce(status::text, ''),
+            coalesce(document_id::text, ''),
+            coalesce(is_deleted::text, ''))) as hashdiff
     from {{ ref("bank_accounts") }}
 
     {% if is_incremental() %}
-    where updated_at >= (
-        select coalesce(max(this.updated_at), '1900-01-01 00:00:00'::timestamptz)
-        from {{ this }} this
-    )
+    where dwh_loaded_at >= (
+        select coalesce(date_trunc('second', max(this.dwh_loaded_at)), '1900-01-01 00:00:00'::timestamptz)
+        from {{ this }} this)
     {% endif %}
 ),
 data_with_fk as (
@@ -38,7 +38,7 @@ data_with_fk as (
         , ods_data.is_deleted
         , ods_data.created_at
         , ods_data.updated_at
-        , ods_data.wh_loaded_at
+        , ods_data.dwh_loaded_at
         , ods_data.valid_from
         , ods_data.valid_to
         , ods_data.is_current
