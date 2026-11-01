@@ -19,15 +19,9 @@ def get_extract_from_minio_raw_to_postgre_staging(spark: SparkSession, config: d
     for table in tables:
 
         table_name = table.get("name")
-        #s3_path = get_s3_path(table).format(table_name=table_name)
-        if table_name == "exchange_rates":
-            s3_path = f"s3a://banking-data-processing-platform/raw/api/sources/{table_name}/2026/10/23/19"
-        elif table_name == "payments":
-            s3_path = f"s3a://banking-data-processing-platform/raw/json/sources/{table_name}/2026/10/23/19"
-        elif table_name == "transactions":
-            s3_path = f"s3a://banking-data-processing-platform/raw/csv/sources/{table_name}/2026/10/23/19"
-        else:
-            s3_path = f"s3a://banking-data-processing-platform/raw/postgre/sources/{table_name}/2026/10/23/19"
+        s3_path = get_s3_path(table).format(table_name=table_name)
+        
+        if "postgre" in s3_path:
 
             df = spark.read.parquet(s3_path).withColumn("value_json", col("value").cast("string"))
 
@@ -38,14 +32,11 @@ def get_extract_from_minio_raw_to_postgre_staging(spark: SparkSession, config: d
             debezium_message = json.loads(row["value_json"])
 
             debezium_schema = debezium_message["schema"]["fields"]
-            debezium_payload = debezium_message["payload"]
 
             for part in debezium_schema:
                 if part["field"] == "after":
                     debezium_schema_after = part["fields"]
                     break
-
-            debezium_payload_after = debezium_payload["after"]
 
             schema_arr = []
             for part in debezium_schema_after:

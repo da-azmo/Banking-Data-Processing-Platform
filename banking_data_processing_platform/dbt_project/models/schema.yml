@@ -267,3 +267,22 @@ sources:
             description: ""
           - name: type
             description: ""
+
+
+
+  - name: ods
+    schema: ods
+    tables:
+      - name: purchase_categories
+        description: ""
+        columns:
+          - name: id
+            description: ""
+          - name: name
+            description: ""
+          - name: created_at
+            description: ""
+          - name: updated_at
+            description: ""
+          - name: dwh_loaded_at
+            description: ""

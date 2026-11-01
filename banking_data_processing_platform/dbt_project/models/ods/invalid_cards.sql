@@ -2,7 +2,7 @@
     materialized='incremental'
     , incremental_strategy='append'
     , schema='ods'
-    , on_schema_change='fail') }}
+    , on_schema_change='append_new_columns') }}
 
 with staging_data as (
     select
