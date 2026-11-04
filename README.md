@@ -22,10 +22,14 @@ Production-like pipeline, который ежедневно собирает д�
 * Инфраструктура: Docker (Kafka, Debezium, S3, ClickHouse)
 
 # Как поднять Docker
-* Перейти в папку проекта: *cd banking_data_processing_platform*
-* Ввести в консоль: *sudo docker compose up/start -d*
+Введите в консоль, находясь в корневой директории (Banking-Data-Processing-Platform):
 
-P.S: на данный момент проект всё ещё находится **в разработке**.
+```bash
+banking_data_processing_platform && sudo docker compose up -d
+```
+
+# FOOTER
+На данный момент проект всё ещё находится **в разработке**.
 Планы на ближайшее время:
 * обновить схемы в документации;
 * добавить оркестрацию Airflow;
