@@ -21,7 +21,7 @@ Production-like pipeline, который ежедневно собирает д�
 * Оркестраторы: Apache Aiflow
 * Инфраструктура: Docker (Kafka, Debezium, S3, ClickHouse)
 
-# Как поднять Docker
+# Как поднять Docker Compose
 Введите в консоль, находясь в корневой директории (Banking-Data-Processing-Platform):
 
 ```bash
