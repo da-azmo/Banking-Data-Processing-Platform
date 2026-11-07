@@ -51,13 +51,15 @@ data_with_fk as (
         , cards_scd2.card_sk as card_sk_sender
         , valid_data.transaction_date
         , valid_data.amount
-        , valid_data.currency
+        , exchange_rates_scd2.rate_sk as rate_sk
         , valid_data.type
         , valid_data.dwh_loaded_at
         , valid_data.hashdiff
     from valid_data
     join {{ ref('cards_scd2') }} cards_scd2 on
         cards_scd2.card_bk = valid_data.card_sender_bk and cards_scd2.is_current
+    join {{ ref('exchange_rates_scd2') }} exchange_rates_scd2 on
+        exchange_rates_scd2.rate_bk = valid_data.currency and exchange_rates_scd2.is_current
 ),
 insert_data as (
     select
@@ -66,7 +68,7 @@ insert_data as (
         , data_with_fk.card_sk_sender
         , data_with_fk.transaction_date
         , data_with_fk.amount
-        , data_with_fk.currency
+        , data_with_fk.rate_sk
         , data_with_fk.type
         , data_with_fk.dwh_loaded_at
         , data_with_fk.hashdiff
@@ -79,7 +81,7 @@ select
     , card_sk_sender
     , transaction_date
     , amount
-    , currency
+    , rate_sk
     , "type"
     , dwh_loaded_at
     , hashdiff

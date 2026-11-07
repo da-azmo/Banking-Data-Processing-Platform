@@ -13,17 +13,17 @@ from extract_from_minio_raw_to_postgre_staging import get_extract_from_minio_raw
 from transform_from_minio_raw_to_postgre_staging import get_transform_from_minio_raw_to_postgre_staging
 from load_from_minio_raw_to_postgre_staging import get_load_from_minio_raw_to_postgre_staging
 
-CONFIG_ODS = get_config("dwh_config", "staging")
+CONFIG_STAGING = get_config("dwh_config", "staging")
 JDBC_OPTIONS = get_jdbc_options()
 
 def pipeline_staging():
 
     spark = get_spark_session()
 
-    dataframes = get_extract_from_minio_raw_to_postgre_staging(spark, CONFIG_ODS)
+    dataframes = get_extract_from_minio_raw_to_postgre_staging(spark, CONFIG_STAGING)
     #print(dataframes)
 
-    valid_transformed_dataframes, invalid_transformed_dataframes = get_transform_from_minio_raw_to_postgre_staging(dataframes, CONFIG_ODS)
+    valid_transformed_dataframes, invalid_transformed_dataframes = get_transform_from_minio_raw_to_postgre_staging(dataframes, CONFIG_STAGING)
     #print(transformed_dataframes)
 
     get_load_from_minio_raw_to_postgre_staging(valid_transformed_dataframes, invalid_transformed_dataframes, JDBC_OPTIONS)

@@ -29,7 +29,8 @@ def get_spark_session():
         .config("spark.hadoop.fs.s3a.access.key", s3_connection_options.get('access_key'))
         .config("spark.hadoop.fs.s3a.secret.key", s3_connection_options.get('secret_key'))
         .config("spark.hadoop.fs.s3a.endpoint", s3_connection_options.get('endpoint'))
-        .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:4.2.0,org.apache.hadoop:hadoop-aws:3.5.0,org.postgresql:postgresql:42.7.13")
+        # .config("spark.clickhouse.read.compression.codec", "none")
+        .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:4.2.0,org.apache.hadoop:hadoop-aws:3.5.0,org.postgresql:postgresql:42.7.13,com.clickhouse:clickhouse-jdbc:0.11.0")
     ).getOrCreate()
 
     return spark

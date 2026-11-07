@@ -7,8 +7,7 @@
 
 with staging_data as (
     select
-        concat(name, base)::text as id
-        , name::text
+        name::text as id
         , rate::numeric(10, 2)
         , base::text
         , created_at::timestamptz
@@ -22,7 +21,6 @@ with staging_data as (
 staging_data_with_row_number as (
     select
         id
-        , name
         , rate
         , base
         , created_at
@@ -34,7 +32,6 @@ staging_data_with_row_number as (
 existed_data as (
     select
         id
-        , name
         , rate
         , base
         , created_at
@@ -46,7 +43,6 @@ existed_data as (
 
 select 
     id
-    , name
     , rate
     , base
     , created_at
