@@ -43,3 +43,57 @@ def get_debezium_oltp_tables_names(config: dict):
         tables_name.append(f"{prefix}.{table}")
     
     return tables_name
+
+
+
+def get_all_dimensions_from_dm(config: dict):
+    
+    return config.get("tables").get("dimensions")
+
+
+
+def get_all_dimension_or_fact_names_from_dm(config: dict):
+    
+    return config.keys()
+
+
+
+def get_all_facts_from_dm(config: dict):
+    
+    return config.get("tables").get("facts")
+
+
+
+def get_all_dds_sources(config: dict):
+    
+    return config.keys() or {}
+
+
+
+def get_all_dm_dds_columns(config: dict):
+    
+    return config.get("columns") or {}
+
+
+
+def get_cur_dimension_config(config: dict, dim_name: str):
+    
+    return get_all_dimensions_from_dm(config).get(dim_name) or {}
+
+
+
+def get_cur_source_sk_key(config: dict):
+    
+    return config.get("sk_key") or ""
+
+
+
+def get_cur_fact_config(config: dict, dim_name: str):
+    
+    return get_all_facts_from_dm(config).get(dim_name) or {}
+
+
+
+def get_dm_s3_path(config: dict):
+
+    return config.get('s3_path')

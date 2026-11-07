@@ -6,7 +6,6 @@
 
 select 
     id
-    , "name"
     , rate
     , base
     , created_at

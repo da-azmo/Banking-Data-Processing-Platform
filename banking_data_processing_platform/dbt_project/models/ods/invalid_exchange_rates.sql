@@ -6,8 +6,7 @@
 
 with staging_data as (
     select
-        concat(name, base)::text as id
-        , name::text
+        name::text as id
         , rate::numeric(10, 2)
         , base::text
         , created_at::timestamptz
@@ -21,7 +20,6 @@ with staging_data as (
 union_data as (
     select
         id
-        , name
         , rate
         , base
         , created_at
@@ -32,8 +30,7 @@ union_data as (
     union all
 
     select
-        concat(name, base)::text as id
-        , name
+        name::text as id
         , rate
         , base
         , created_at
@@ -43,7 +40,6 @@ union_data as (
 )
 select 
     id
-    , name
     , rate
     , base
     , created_at

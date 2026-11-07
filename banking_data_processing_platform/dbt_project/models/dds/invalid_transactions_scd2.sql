@@ -17,8 +17,12 @@ with ods_data as (
     where not exists (
         select 1
         from {{ ref('cards_scd2') }} cards_scd2
-        where cards_scd2.card_bk = transactions.card_id_sender and cards_scd2.is_current
-    )
+        where cards_scd2.card_bk = transactions.card_id_sender and cards_scd2.is_current)
+    and not exists(
+        select 1
+        from {{ ref('exchange_rates_scd2') }} exchange_rates_scd2
+        where exchange_rates_scd2.rate_bk = transactions.currency and exchange_rates_scd2.is_current)
+
 
     {% if is_incremental() %}
     and dwh_loaded_at >= (

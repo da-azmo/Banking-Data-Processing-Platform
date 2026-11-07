@@ -19,9 +19,10 @@ def get_extract_from_minio_raw_to_postgre_staging(spark: SparkSession, config: d
     for table in tables:
 
         table_name = table.get("name")
+        table_source = table.get("source")
         s3_path = get_s3_path(table).format(table_name=table_name)
         
-        if "postgre" in s3_path:
+        if table_source == "oltp":
 
             df = spark.read.parquet(s3_path).withColumn("value_json", col("value").cast("string"))
 

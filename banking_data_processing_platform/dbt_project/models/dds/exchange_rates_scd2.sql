@@ -8,7 +8,6 @@
 with ods_data as (
     select
         id as rate_bk
-        , name
         , rate
         , base
         , created_at
@@ -19,7 +18,6 @@ with ods_data as (
         , true as is_current
         , MD5(concat_ws('|',
             coalesce(id::text, ''),
-            coalesce(name::text, ''),
             coalesce(rate::text, ''),
             coalesce(base::text, ''))) as hashdiff
     from {{ ref("exchange_rates") }}
@@ -34,7 +32,6 @@ insert_data as (
     select
         nextval('dds.seq_rate_sk')::bigint as rate_sk
         , ods_data.rate_bk
-        , ods_data.name
         , ods_data.rate
         , ods_data.base
         , ods_data.created_at
@@ -60,7 +57,6 @@ update_data as (
     select
         this.rate_sk
         , this.rate_bk
-        , this.name
         , this.rate
         , this.base
         , this.created_at
@@ -77,7 +73,6 @@ update_data as (
 select 
     rate_sk
     , rate_bk
-    , name
     , rate
     , base
     , created_at
@@ -93,7 +88,6 @@ union all
 select 
     rate_sk
     , rate_bk
-    , name
     , rate
     , base
     , created_at

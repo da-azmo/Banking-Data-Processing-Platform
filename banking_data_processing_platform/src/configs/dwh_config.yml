@@ -188,3 +188,550 @@ staging:
         - amount
         - currency
         - type
+
+
+dds:
+  tables:
+
+    - name: exchange_rates_scd2
+      columns:
+        - rate_sk
+        - rate_bk
+        - rate
+        - base
+        - dwh_loaded_at
+
+    - name: client_documents_scd2
+      columns:
+        - document_sk
+        - document_bk
+        - client_sk
+        - status
+        - country
+        - document_type
+        - series
+        - number
+        - issue_date
+        - issuer
+        - dwh_loaded_at
+      
+    - name: clients_scd2
+      columns:
+        - client_sk
+        - client_bk
+        - first_name
+        - last_name
+        - middle_name
+        - birth_date
+        - is_deleted
+        - dwh_loaded_at
+      
+    - name: bank_accounts_scd2
+      columns:
+        - account_sk
+        - account_bk
+        - status
+        - document_sk
+        - is_deleted
+        - dwh_loaded_at
+
+    - name: cards_scd2
+      columns:
+        - card_sk
+        - card_bk
+        - status
+        - account_sk
+        - number
+        - term
+        - dwh_loaded_at
+      
+    - name: purchase_categories_scd2
+      columns:
+        - category_sk
+        - category_bk
+        - name
+        - dwh_loaded_at
+
+    - name: payments_scd2
+      columns:
+        - payment_sk
+        - status
+        - payment_method
+        - is_current
+        - dwh_loaded_at
+
+    - name: transactions_scd2
+      columns:
+        - transaction_sk
+        - amount
+        - rate_sk
+        - type
+        - is_current
+        - dwh_loaded_at
+
+
+
+dm_for_transform:
+  s3_path: s3a://reference-data/{table_name}
+
+  tables:
+    dimensions:
+
+
+      dim_exchange_rates:
+
+        exchange_rates_scd2:
+          sk_key: rate_sk
+          columns:
+            rate_sk: rate_sk
+            rate_bk: rate_bk
+            rate: rate
+            base: base
+            dm_loaded_at: dwh_loaded_at
+
+      dim_client_documents:
+
+        client_documents_scd2:
+          sk_key: document_sk
+          columns:
+            document_sk: document_sk
+            document_bk: document_bk
+            client_sk: client_sk
+            status: status
+            country: country
+            document_type: document_type
+            series: series
+            number: number
+            issue_date: issue_date
+            issuer: issuer
+            dm_loaded_at: dwh_loaded_at
+        
+      dim_clients:
+
+        clients_scd2:
+          sk_key: client_sk
+          columns:
+            client_sk: client_sk
+            client_bk: client_bk
+            first_name: first_name
+            last_name: last_name
+            middle_name: middle_name
+            birth_date: birth_date
+            is_deleted: is_deleted
+            dm_loaded_at: dwh_loaded_at
+        
+      dim_bank_accounts:
+
+        bank_accounts_scd2:
+          sk_key: account_sk
+          columns:
+            account_sk: account_sk
+            account_bk: account_bk
+            status: status
+            document_sk: document_sk
+            is_deleted: is_deleted
+            dm_loaded_at: dwh_loaded_at
+
+      dim_cards:
+
+        cards_scd2_sender:
+          sk_key: card_sk
+          columns:
+            card_sk: card_sk
+            card_bk: card_bk
+            status: status
+            account_sk: account_sk
+            number: number
+            term: term
+            dm_loaded_at: dwh_loaded_at
+        
+      dim_purchase_categories:
+
+        purchase_categories_scd2:
+          sk_key: category_sk
+          columns:
+            category_sk: category_sk
+            category_bk: category_bk
+            name: name
+            dm_loaded_at: dwh_loaded_at
+      
+
+
+    facts:
+
+
+      fact_payments:
+        
+        payments_scd2:
+          sk_key: payment_sk
+          columns:
+            payment_sk: payment_sk
+            payment_bk: payment_bk
+            payment_method: payment_method
+            payment_date: payment_date
+            transaction_sk: transaction_sk
+            category_sk: category_sk
+            card_sk_sender: card_sk_sender
+            card_sk_recipient: card_sk_recipient
+            status: status
+            dm_loaded_at: dwh_loaded_at
+
+        transactions_scd2:
+          sk_key: transaction_sk
+          columns:
+            transaction_sk: transaction_sk
+            transaction_bk: transaction_bk
+
+        purchase_categories_scd2:
+          sk_key: category_sk
+          columns:
+            category_sk: category_sk
+            category_bk: category_bk
+
+        cards_scd2_sender:
+          sk_key: card_sk_sender
+          columns:
+            card_sk_sender: card_sk
+            card_bk_sender: card_bk
+
+        cards_scd2_recipient:
+          sk_key: card_sk_recipient
+          columns:
+            card_sk_recipient: card_sk
+            card_bk_recipient: card_bk
+
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
+
+      fact_transactions:
+
+        transactions_scd2:
+          sk_key: transaction_sk
+          columns:
+            transaction_sk: transaction_sk
+            transaction_bk: transaction_bk
+            card_sk_sender: card_sk_sender
+            transaction_date_for_key: transaction_date
+            transaction_date: transaction_date
+            amount: amount
+            rate_sk: rate_sk
+            type: type
+            dm_loaded_at: dwh_loaded_at
+
+        exchange_rates_scd2:
+          sk_key: rate_sk
+          columns:
+            rate_sk: rate_sk
+            rate_bk: rate_bk
+            
+        cards_scd2_sender:
+          sk_key: card_sk_sender
+          columns:
+            card_sk_sender: card_sk 
+            card_bk_sender: card_bk
+
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
+        
+      fact_transactions_by_day:
+
+        transactions_scd2:
+          sk_key: transaction_sk
+          columns:
+            transaction_sk: transaction_sk
+            transaction_bk: transaction_bk
+            transaction_date: transaction_date
+            dm_loaded_at: dwh_loaded_at
+
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
+        
+      fact_clients_with_one_transaction_at_least_by_day:
+
+        transactions_scd2:
+          sk_key: transaction_sk
+          columns:
+            transaction_sk: transaction_sk
+            transaction_bk: transaction_bk
+            transaction_date: transaction_date
+            card_sk_sender: card_sk_sender
+            dm_loaded_at: dwh_loaded_at
+            
+        cards_scd2_sender:
+          sk_key: card_sk_sender
+          columns:
+            card_sk_sender: card_sk
+            card_bk_sender: card_bk
+            account_sk: account_sk
+
+        bank_accounts_scd2:
+          sk_key: account_sk
+          columns:
+            account_sk: account_sk
+            account_bk: account_bk
+            document_sk: document_sk
+
+        client_documents_scd2:
+          sk_key: document_sk
+          columns:
+            document_sk: document_sk
+            document_bk: document_bk
+            client_sk: client_sk
+
+        clients_scd2:
+          sk_key: client_sk
+          columns:
+            client_sk: client_sk
+            client_bk: client_bk
+
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
+            year: year
+            month_name: month_name
+
+
+      fact_transactions_exchange_rates_by_month:
+
+        transactions_scd2:
+          sk_key: transaction_sk
+          columns:
+            transaction_sk: transaction_sk
+            transaction_bk: transaction_bk
+            transaction_date: transaction_date
+            rate_sk: rate_sk
+            amount: amount
+            dm_loaded_at: dwh_loaded_at
+
+        exchange_rates_scd2:
+          sk_key: rate_sk
+          columns:
+            rate_sk: rate_sk
+            rate_bk: rate_bk
+
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
+            year: year
+            month_name: month_name
+        
+      fact_popularity_purchase_category:
+
+        payments_scd2:
+          sk_key: payment_sk
+          columns:
+            payment_sk: payment_sk
+            payment_bk: payment_bk
+            payment_method: payment_method
+            payment_date: payment_date
+            transaction_sk: transaction_sk
+            category_sk: category_sk
+            status: status
+            dm_loaded_at: dwh_loaded_at
+
+        transactions_scd2:
+          sk_key: transaction_sk
+          columns:
+            transaction_sk: transaction_sk
+            transaction_bk: transaction_bk
+
+        purchase_categories_scd2:
+          sk_key: category_sk
+          columns:
+            category_sk: category_sk
+            category_sk: category_bk
+
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
+        
+      fact_active_cards_by_month:
+
+        cards_scd2_sender:
+          sk_key: card_sk
+          columns:
+            card_sk: card_sk_sender
+            card_bk: card_bk_sender
+            status: status
+            valid_from: valid_from
+            valid_to: valid_to
+            dm_loaded_at: dwh_loaded_at
+            
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
+            year: year
+            month_name: month_name
+        
+      fact_transaction_by_client:
+
+        transactions_scd2:
+          sk_key: transaction_sk
+          columns:
+            transaction_sk: transaction_sk
+            transaction_bk: transaction_bk
+            card_sk_sender: card_sk_sender
+            dm_loaded_at: dwh_loaded_at
+
+        cards_scd2_sender:
+          sk_key: card_sk_sender
+          columns:
+            card_sk_sender: card_sk
+            account_sk: account_sk
+
+        bank_accounts_scd2:
+          sk_key: account_sk
+          columns:
+            account_sk: account_sk
+            account_bk: account_bk
+            document_sk: document_sk
+
+        client_documents_scd2:
+          sk_key: document_sk
+          columns:
+            document_sk: document_sk
+            document_bk: document_bk
+            client_sk: client_sk
+
+        clients_scd2:
+          sk_key: client_sk
+          columns:
+            client_sk: client_sk
+            client_bk: client_bk
+
+
+dm_for_result:
+
+  tables:
+    dimensions:
+      dim_exchange_rates:
+        - rate_sk
+        - rate_bk
+        - rate
+        - base
+        - dm_loaded_at
+
+      dim_client_documents:
+        - document_sk
+        - document_bk
+        - client_sk 
+        - status
+        - country
+        - document_type
+        - series
+        - number 
+        - issue_date
+        - issuer
+        - dm_loaded_at
+
+      dim_clients:
+        - client_sk
+        - client_bk
+        - first_name 
+        - last_name
+        - middle_name
+        - birth_date
+        - is_deleted
+        - dm_loaded_at
+
+      dim_bank_accounts:
+        - account_sk
+        - account_bk
+        - status 
+        - document_sk
+        - is_deleted
+        - dm_loaded_at
+      
+      dim_cards:
+        - card_sk
+        - card_bk
+        - status 
+        - account_sk
+        - number
+        - term
+        - dm_loaded_at
+
+      dim_purchase_categories:
+        - category_sk
+        - category_bk
+        - name
+        - dm_loaded_at
+      
+    facts:
+      fact_payments:
+        - payment_sk
+        - payment_bk
+        - date_sk
+        - transaction_sk
+        - transaction_bk
+        - category_sk
+        - category_bk
+        - card_sk_sender
+        - card_bk_sender
+        - card_sk_recipient
+        - card_bk_recipient
+        - payment_method
+        - payment_date
+        - status
+        - dm_loaded_at
+
+      fact_transactions:
+        - transaction_sk
+        - transaction_bk
+        - date_sk 
+        - card_sk_sender
+        - card_bk_sender
+        - amount 
+        - rate_sk
+        - rate_bk
+        - type
+        - dm_loaded_at
+      
+      fact_transactions_by_day:
+        - date_sk
+        - transactions_count
+        - dm_loaded_at
+
+      fact_clients_with_one_transaction_at_least_by_day:
+        - date_sk
+        - clients_count
+        - dm_loaded_at
+
+      fact_transactions_exchange_rates_by_month:
+        - year
+        - month_name
+        - rate_bk
+        - operations_count
+        - total_amount
+        - dm_loaded_at
+
+      fact_popularity_purchase_category:
+        - date_sk
+        - category_sk
+        - category_bk
+        - operations_count
+        - total_amount
+        - dm_loaded_at
+
+      fact_active_cards_by_month:
+        - year
+        - month_name
+        - active_cards_count
+        - dm_loaded_at
+
+      fact_transaction_by_client:
+        - date_sk
+        - client_sk
+        - client_bk
+        - operations_count
+        - dm_loaded_at
