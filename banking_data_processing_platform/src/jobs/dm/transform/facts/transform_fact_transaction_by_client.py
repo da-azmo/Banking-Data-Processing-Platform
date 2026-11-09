@@ -15,7 +15,7 @@ def get_transform_fact_transaction_by_client(config: dict, dataframes: dict, df_
     
     this_fact_config = get_cur_fact_config(config, THIS_FACT_NAME)
 
-    result_df = rename_and_join_dim_or_fact(this_fact_config, dataframes, THIS_FACT_NAME, df_dim_dates, "payment_date")
+    result_df = rename_and_join_dim_or_fact(this_fact_config, dataframes, THIS_FACT_NAME, df_dim_dates, "transaction_date")
 
     result_df = ( result_df
         .groupBy("client_bk", "date_sk")
