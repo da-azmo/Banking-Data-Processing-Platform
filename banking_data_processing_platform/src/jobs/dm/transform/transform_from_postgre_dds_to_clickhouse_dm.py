@@ -15,6 +15,9 @@ from transform_fact_transactions import get_transform_fact_transactions
 from transform_fact_transactions_by_day import get_transform_fact_transactions_by_day
 from transform_fact_clients_with_one_transaction_at_least_by_day import get_transform_fact_clients_with_one_transaction_at_least_by_day
 from transform_fact_transactions_exchange_rates_by_month import get_transform_fact_transactions_exchange_rates_by_month
+from transform_fact_popularity_purchase_category import get_transform_fact_popularity_purchase_category
+from transform_fact_transaction_by_client import get_transform_fact_transaction_by_client
+from transform_fact_active_cards_by_month import get_transform_fact_active_cards_by_month
 
 def get_transform_from_postgre_dds_to_clickhouse_dm(spark: SparkSession, dataframes: dict, config_dm: dict, config_dm_result_columns: dict):
     transformed_dataframes = {}
@@ -22,12 +25,15 @@ def get_transform_from_postgre_dds_to_clickhouse_dm(spark: SparkSession, datafra
 
     df_dim_dates = get_extract___dim_dates_from_minio(spark, config_dm)
 
-    # transformed_dataframes = get_transform_all_dimensions(config_dm, dataframes, df_dim_dates)
+    transformed_dataframes = get_transform_all_dimensions(config_dm, dataframes, df_dim_dates)
     transformed_dataframes["fact_payments"] = get_transform_fact_payments(config_dm, dataframes, df_dim_dates)
     transformed_dataframes["fact_transactions"] = get_transform_fact_transactions(config_dm, dataframes, df_dim_dates)
     transformed_dataframes["fact_transactions_by_day"] = get_transform_fact_transactions_by_day(config_dm, dataframes, df_dim_dates)
     transformed_dataframes["fact_clients_with_one_transaction_at_least_by_day"] = get_transform_fact_clients_with_one_transaction_at_least_by_day(config_dm, dataframes, df_dim_dates)
     transformed_dataframes["fact_transactions_exchange_rates_by_month"] = get_transform_fact_transactions_exchange_rates_by_month(config_dm, dataframes, df_dim_dates)
+    transformed_dataframes["fact_popularity_purchase_category"] = get_transform_fact_popularity_purchase_category(config_dm, dataframes, df_dim_dates)
+    transformed_dataframes["fact_transaction_by_client"] = get_transform_fact_transaction_by_client(config_dm, dataframes, df_dim_dates)
+    transformed_dataframes["fact_active_cards_by_month"] = get_transform_fact_active_cards_by_month(config_dm, dataframes, df_dim_dates)
 
     for table_name, df in transformed_dataframes.items():
         try:
@@ -36,13 +42,13 @@ def get_transform_from_postgre_dds_to_clickhouse_dm(spark: SparkSession, datafra
         except Exception:
             raise ValueError(f"В таблице {table_name} отсутствуют необходимые столбцы (один или более)")
     
-    for name, df in transformed_dataframes.items():
-        print(name)
-        df.show(5)
-        print()
-        print()
+    # for name, df in transformed_dataframes.items():
+    #     print(name)
+    #     df.show(5)
+    #     print()
+    #     print()
 
-
+    return transformed_dataframes
 
 
 

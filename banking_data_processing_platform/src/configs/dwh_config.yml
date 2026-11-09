@@ -542,12 +542,13 @@ dm_for_transform:
           columns:
             transaction_sk: transaction_sk
             transaction_bk: transaction_bk
+            amount: amount
 
         purchase_categories_scd2:
           sk_key: category_sk
           columns:
             category_sk: category_sk
-            category_sk: category_bk
+            category_bk: category_bk
 
         dim_dates:
           sk_key: date_sk
@@ -557,10 +558,10 @@ dm_for_transform:
       fact_active_cards_by_month:
 
         cards_scd2_sender:
-          sk_key: card_sk
+          sk_key: card_sk_sender
           columns:
-            card_sk: card_sk_sender
-            card_bk: card_bk_sender
+            card_sk_sender: card_sk
+            card_bk_sender: card_bk
             status: status
             valid_from: valid_from
             valid_to: valid_to
@@ -580,6 +581,7 @@ dm_for_transform:
           columns:
             transaction_sk: transaction_sk
             transaction_bk: transaction_bk
+            transaction_date: transaction_date
             card_sk_sender: card_sk_sender
             dm_loaded_at: dwh_loaded_at
 
@@ -608,6 +610,11 @@ dm_for_transform:
           columns:
             client_sk: client_sk
             client_bk: client_bk
+
+        dim_dates:
+          sk_key: date_sk
+          columns:
+            date_sk: date_sk
 
 
 dm_for_result:
@@ -691,7 +698,7 @@ dm_for_result:
         - date_sk 
         - card_sk_sender
         - card_bk_sender
-        - amount 
+        - amount
         - rate_sk
         - rate_bk
         - type
@@ -717,7 +724,6 @@ dm_for_result:
 
       fact_popularity_purchase_category:
         - date_sk
-        - category_sk
         - category_bk
         - operations_count
         - total_amount
@@ -731,7 +737,6 @@ dm_for_result:
 
       fact_transaction_by_client:
         - date_sk
-        - client_sk
         - client_bk
         - operations_count
         - dm_loaded_at

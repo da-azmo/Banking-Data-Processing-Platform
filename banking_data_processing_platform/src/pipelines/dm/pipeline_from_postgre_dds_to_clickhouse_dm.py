@@ -6,6 +6,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent / "infrastructure" / "sp
 sys.path.append(str(Path(__file__).parent.parent.parent / "infrastructure" / "database"))
 sys.path.append(str(Path(__file__).parent.parent.parent / "jobs" / "dm" / "extract"))
 sys.path.append(str(Path(__file__).parent.parent.parent / "jobs" / "dm" / "transform"))
+sys.path.append(str(Path(__file__).parent.parent.parent / "jobs" / "dm" / "load"))
 
 from config import get_config
 from session import get_spark_session
@@ -13,6 +14,8 @@ from postgre import get_jdbc_POSTGRE_dds_options
 from clickhouse import get_jdbc_CLICKHOUSE_options
 from extract_from_postgre_dds_to_clickhouse_dm import get_extract_from_postgre_dds_to_clickhouse_dm
 from transform_from_postgre_dds_to_clickhouse_dm import get_transform_from_postgre_dds_to_clickhouse_dm
+from load_from_postgre_dds_to_clickhouse_dm import get_load_from_postgre_dds_to_clickhouse_dm
+
 
 CONFIG_DDS = get_config("dwh_config", "dds")
 CONFIG_DM = get_config("dwh_config", "dm_for_transform")
@@ -24,9 +27,13 @@ def pipelines_dm():
 
     spark = get_spark_session()
 
+    # get_extract_from_postgre_dds_to_clickhouse_dm(spark, CONFIG_DDS, CONFIG_DM, POSTGRE_JDBC_OPTIONS, CLICKHOUSE_JDBC_OPTIONS)
     dfs = get_extract_from_postgre_dds_to_clickhouse_dm(spark, CONFIG_DDS, CONFIG_DM, POSTGRE_JDBC_OPTIONS, CLICKHOUSE_JDBC_OPTIONS)
     
-    get_transform_from_postgre_dds_to_clickhouse_dm(spark, dfs, CONFIG_DM, CONFIG_DM_RESULT_COLUMNS)
+    # get_transform_from_postgre_dds_to_clickhouse_dm(spark, dfs, CONFIG_DM, CONFIG_DM_RESULT_COLUMNS)
+    transformed_dataframes = get_transform_from_postgre_dds_to_clickhouse_dm(spark, dfs, CONFIG_DM, CONFIG_DM_RESULT_COLUMNS)
+    
+    get_load_from_postgre_dds_to_clickhouse_dm(transformed_dataframes, CLICKHOUSE_JDBC_OPTIONS)
     
     spark.stop()
 

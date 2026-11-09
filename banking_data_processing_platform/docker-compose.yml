@@ -117,6 +117,7 @@ services:
   clickhouse:
     image: "clickhouse/clickhouse-server:26.10"
     container_name: banking-data-processing-platform-CLICKHOUSE
+    mem_limit: 1g
     environment:
       CLICKHOUSE_USER: ${CLICKHOUSE_USER}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
