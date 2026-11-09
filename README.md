@@ -25,7 +25,7 @@ Production-like pipeline, который ежедневно собирает д�
 Введите в консоль, находясь в корневой директории (Banking-Data-Processing-Platform):
 
 ```bash
-banking_data_processing_platform && sudo docker compose up -d
+cd banking_data_processing_platform && sudo docker compose up -d
 ```
 
 # FOOTER
