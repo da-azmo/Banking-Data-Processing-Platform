@@ -63,7 +63,7 @@ def transform_and_rename_date_option(result_df: DataFrame, DATE_OPTION: str, cur
 
     df_with_transformed_DATE_OPTION = ( result_df
         .withColumn(f"{cur_sk_key}_DateType", F.to_date(F.col(DATE_OPTION), 'yyyy-MM-dd'))
-        .withColumn(cur_sk_key, F.date_format(F.col(f"{cur_sk_key}_DateType"), 'yyyyMMdd'))
+        .withColumn(cur_sk_key, F.date_format(F.col(f"{cur_sk_key}_DateType"), 'yyyyMMdd').cast("bigint"))
     )
 
     return df_with_transformed_DATE_OPTION

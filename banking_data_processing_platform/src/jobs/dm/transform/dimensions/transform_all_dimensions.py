@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from pyspark.sql import DataFrame
+import pyspark.sql.functions as F
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent / "core"))
 sys.path.append(str(Path(__file__).parent.parent / "common"))
@@ -18,6 +19,8 @@ def get_transform_all_dimensions(config: dict, dataframes: dict, df_dim_dates: D
         this_dim_config = get_cur_dimension_config(config, dim_name)
         if this_dim_config:
             result_df = rename_and_join_dim_or_fact(this_dim_config, dataframes, dim_name, df_dim_dates)
+
+            result_df = result_df.withColumn('dm_loaded_at', F.current_timestamp())
 
             dim_transformed_dataframes[dim_name] = result_df
 
