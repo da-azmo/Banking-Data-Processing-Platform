@@ -287,7 +287,6 @@ dm_for_transform:
             rate_bk: rate_bk
             rate: rate
             base: base
-            dm_loaded_at: dwh_loaded_at
 
       dim_client_documents:
 
@@ -304,7 +303,6 @@ dm_for_transform:
             number: number
             issue_date: issue_date
             issuer: issuer
-            dm_loaded_at: dwh_loaded_at
         
       dim_clients:
 
@@ -318,7 +316,6 @@ dm_for_transform:
             middle_name: middle_name
             birth_date: birth_date
             is_deleted: is_deleted
-            dm_loaded_at: dwh_loaded_at
         
       dim_bank_accounts:
 
@@ -330,7 +327,6 @@ dm_for_transform:
             status: status
             document_sk: document_sk
             is_deleted: is_deleted
-            dm_loaded_at: dwh_loaded_at
 
       dim_cards:
 
@@ -343,7 +339,6 @@ dm_for_transform:
             account_sk: account_sk
             number: number
             term: term
-            dm_loaded_at: dwh_loaded_at
         
       dim_purchase_categories:
 
@@ -353,7 +348,6 @@ dm_for_transform:
             category_sk: category_sk
             category_bk: category_bk
             name: name
-            dm_loaded_at: dwh_loaded_at
       
 
 
@@ -374,7 +368,6 @@ dm_for_transform:
             card_sk_sender: card_sk_sender
             card_sk_recipient: card_sk_recipient
             status: status
-            dm_loaded_at: dwh_loaded_at
 
         transactions_scd2:
           sk_key: transaction_sk
@@ -418,7 +411,6 @@ dm_for_transform:
             amount: amount
             rate_sk: rate_sk
             type: type
-            dm_loaded_at: dwh_loaded_at
 
         exchange_rates_scd2:
           sk_key: rate_sk
@@ -445,7 +437,6 @@ dm_for_transform:
             transaction_sk: transaction_sk
             transaction_bk: transaction_bk
             transaction_date: transaction_date
-            dm_loaded_at: dwh_loaded_at
 
         dim_dates:
           sk_key: date_sk
@@ -461,7 +452,6 @@ dm_for_transform:
             transaction_bk: transaction_bk
             transaction_date: transaction_date
             card_sk_sender: card_sk_sender
-            dm_loaded_at: dwh_loaded_at
             
         cards_scd2_sender:
           sk_key: card_sk_sender
@@ -508,7 +498,6 @@ dm_for_transform:
             transaction_date: transaction_date
             rate_sk: rate_sk
             amount: amount
-            dm_loaded_at: dwh_loaded_at
 
         exchange_rates_scd2:
           sk_key: rate_sk
@@ -535,7 +524,6 @@ dm_for_transform:
             transaction_sk: transaction_sk
             category_sk: category_sk
             status: status
-            dm_loaded_at: dwh_loaded_at
 
         transactions_scd2:
           sk_key: transaction_sk
@@ -565,7 +553,6 @@ dm_for_transform:
             status: status
             valid_from: valid_from
             valid_to: valid_to
-            dm_loaded_at: dwh_loaded_at
             
         dim_dates:
           sk_key: date_sk
@@ -583,7 +570,6 @@ dm_for_transform:
             transaction_bk: transaction_bk
             transaction_date: transaction_date
             card_sk_sender: card_sk_sender
-            dm_loaded_at: dwh_loaded_at
 
         cards_scd2_sender:
           sk_key: card_sk_sender
